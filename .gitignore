@@ -1,0 +1,10 @@
+__pycache__/
+.idea/
+charts/
+checkpoints/
+datasets/
+extra-images/
+model/
+recognized_emotions/
+sorted-sets/
+tflear_logs/
