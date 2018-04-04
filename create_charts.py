@@ -7,7 +7,7 @@ from matplotlib.collections import LineCollection
 def create_line_chart(date, times, emotions, predictions):
 
     # Выбираем значения каждой эмоции из всех предсказаний
-    plots = [[], [], [], [], [], []]
+    plots = [[] for _ in range(0, len(emotions))]
     for i in range(0, len(emotions)):
         for p in predictions:
             plots[i].append(p[0][i])
@@ -27,7 +27,7 @@ def create_line_chart(date, times, emotions, predictions):
 
 
 def create_time_line(date, times, emotions, predictions):
-    colors = ['blue', 'orange', 'green', 'red', 'purple', 'brown']
+    colors = ['blue', 'orange', 'green', 'red', 'purple', 'brown', 'magenta']
     emotion_colors = {e: c for e, c in zip(emotions, colors)}
 
     x = list(range(0, len(times)))

@@ -6,7 +6,7 @@ from shutil import copy
 import detection
 
 
-def prepare_CK():
+def preparing_CK_dataset():
     """
     Датасет CK+
     Подготовка данных для тренировки - разбивает изображения по папкам эмоций в папку sorted-sets.
@@ -17,8 +17,7 @@ def prepare_CK():
     """
 
     # Эмоции из датасета CK+, данные по которым будут подготавливаться
-    # emotions = ['neutral', 'anger', 'disgust', 'fear', 'happy', 'sadness', 'surprise']
-    emotions = ['anger', 'disgust', 'fear', 'happy', 'sadness', 'surprise']
+    emotions = ['neutral', 'anger', 'contempt', 'disgust', 'fear', 'happy', 'sadness', 'surprise']
 
     folders = glob.glob('emotions\\*')
 
@@ -55,25 +54,21 @@ def prepare_CK():
     return count
 
 
-def preparing_data():
+def make_training_data():
     """
-    Датасет CK+ и директория с дополнительными изображениями
+    Все изображения из папок эмоций в sorted-sets
     Подготовка данных для тренировки - выделяет на каждом изображении лицо, конвертирует изображение в градации серого
     и отцентровывает его.
-    Конечные изображения разбиваются по папка эмоций в папке datasets
-    :param extra: Флаг, нужно ли использовать дополнительные изображения
+    Конечные изображения разбиваются по папкам эмоций в папке datasets
     :return: количество обработанных изображений
     """
 
     # Эмоции(contempt эмоция из датасета CK+ пропускается)
-    # emotions = ['neutral', 'anger', 'disgust', 'fear', 'happy', 'sadness', 'surprise']
-    emotions = ['anger', 'disgust', 'fear', 'happy', 'sadness', 'surprise']
+    emotions = ["anger", "disgust", "fear", "happy", "neutral", "sadness", "surprise"]
 
     count = 0
     for emotion in emotions:
         files = glob.glob('sorted-sets\\%s\\*' % emotion)
-        extra_data_files = glob.glob('extra-images\\%s\\*' % emotion)
-        files = files + extra_data_files
 
         i = 0
         for f in files:
@@ -86,7 +81,7 @@ def preparing_data():
                 os.remove(f)
                 continue
 
-            # Удаляем файлы, на которых не были найдены лица
+            # Сохраняем изображения с лицами и удаляем остальные
             if aligned_images:
                 for img in aligned_images:
                     cv2.imwrite('datasets\\%s\\%s.jpg' % (emotion, i), img)

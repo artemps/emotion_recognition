@@ -19,9 +19,7 @@ from create_charts import create_line_chart, create_time_line, create_bar_chart,
 from generate_csv import generate_csv_data
 
 
-# нейтральный, злой, отвращение, страх, счастливый, грустный, удивленный
-# EMOTIONS = ['neutral', 'anger', 'disgust', 'fear', 'happy', 'sadness', 'surprise']
-EMOTIONS = ['anger', 'disgust', 'fear', 'happy', 'sadness', 'surprise']
+EMOTIONS = ['anger', 'disgust', 'fear', 'happy', 'neutral', 'sadness', 'surprise']
 
 
 def recognize(image, model):
@@ -102,9 +100,8 @@ def main(model):
 
             # Отрисовка квадратов лиц и подписей
             for rect, pred in zip(rectangles, predictions):
-                cv2.rectangle(frame, (rect[0], rect[1]), (rect[2], rect[3]), (0, 0, 255), 2)
+                # cv2.rectangle(frame, (rect[0], rect[1]), (rect[2], rect[3]), (0, 0, 255), 2)
                 cv2.imwrite('recognized_emotions/images_{}.jpg'.format(i), frame)
-
                 emotions_predictions.append(predictions)
                 times.append(datetime.now().time())
                 i += 1

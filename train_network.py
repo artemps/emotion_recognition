@@ -1,4 +1,3 @@
-import sys
 import glob
 import cv2
 import random
@@ -13,11 +12,10 @@ from tflearn.layers.estimator import regression
 from tflearn.data_augmentation import ImageAugmentation
 from tflearn.data_preprocessing import ImagePreprocessing
 
-import prepare_train_data
+from prepare_train_data import make_training_data
 
-# нейтральный, злой, отвращение, страх, счастливый, грустный, удивленный
-# EMOTIONS = ['neutral', 'anger', 'disgust', 'fear', 'happy', 'sadness', 'surprise']
-EMOTIONS = ['anger', 'disgust', 'fear', 'happy', 'sadness', 'surprise']
+
+EMOTIONS = ['anger', 'disgust', 'fear', 'happy', 'neutral', 'sadness', 'surprise']
 
 
 def get_files(emotion):
@@ -65,13 +63,13 @@ def make_sets():
     return (train_data, train_labels), (test_data, test_labels)
 
 
-# Вывод тех эмоций, на распознавание которых будем обучать нейросеть
+# START
 print('----------')
 print('Emotions for learning:', EMOTIONS)
 print('----------')
 
 # Подготовка тренировочных данных
-aligned_file_count = prepare_train_data.preparing_data()
+aligned_file_count = make_training_data()
 print('{} files aligned and saved in datasets'.format(aligned_file_count))
 print('----------')
 

@@ -3,7 +3,6 @@ __pycache__/
 charts/
 checkpoints/
 datasets/
-extra-images/
 model/
 recognized_emotions/
 sorted-sets/
