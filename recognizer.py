@@ -96,7 +96,7 @@ def main(model):
 
     try:
         while cap.isOpened():
-            sleep(0.55)
+            sleep(0.5)
             _, frame = cap.read()
             rectangles, predictions = recognize(frame, model)
 
@@ -126,10 +126,10 @@ if __name__ == '__main__':
     date = datetime.now().date().strftime('%Y-%m-%d')
     t = [x.strftime('%H:%M:%S') for x in t]
 
-    create_line_chart(date, t, ep)
+    create_line_chart(date, t, EMOTIONS, ep)
     create_time_line(date, t, EMOTIONS, ep)
-    create_bar_chart(date, t, ep)
-    create_pie_chart(date, t, ep)
+    create_bar_chart(date, t, EMOTIONS, ep)
+    create_pie_chart(date, t, EMOTIONS, ep)
 
     # Create csv
     generate_csv_data(date, t, EMOTIONS, ep)

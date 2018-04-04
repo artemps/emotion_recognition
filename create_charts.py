@@ -3,23 +3,19 @@ import numpy as np
 from matplotlib.collections import LineCollection
 
 
-def create_line_chart(date, times, predictions):
-    anger = [x[0][0] for x in predictions]
-    disgust = [x[0][1] for x in predictions]
-    fear = [x[0][2] for x in predictions]
-    happy = [x[0][3] for x in predictions]
-    sadness = [x[0][4] for x in predictions]
-    surprise = [x[0][5] for x in predictions]
+def create_line_chart(date, times, emotions, predictions):
+
+    # Выбираем значения каждой эмоции из всех предсказаний
+    plots = [[], [], [], [], [], []]
+    for i in range(0, len(emotions)):
+        for p in predictions:
+            plots[i].append(p[0][i])
 
     fig, ax = plt.subplots()
-    ax.plot(times, anger, label='Anger')
-    ax.plot(times, disgust, label='Disgust')
-    ax.plot(times, fear, label='Fear')
-    ax.plot(times, happy, label='Happy')
-    ax.plot(times, sadness, label='Sadness')
-    ax.plot(times, surprise, label='Surprise')
+    for emotion, plot in zip(emotions, plots):
+        ax.plot(times, plot, label=emotion)
 
-    ax.set(xlabel='time', ylabel='emotions',
+    ax.set(xlabel='time', ylabel='values',
            title='Emotions by time {} {}-{}'.format(date, times[0], times[1]))
     ax.legend()
 
@@ -46,35 +42,44 @@ def create_time_line(date, times, emotions, predictions):
     plt.show()
 
 
-def create_bar_chart(date, emotions, predictions):
-    men_means = (20, 35, 30, 35, 27)
+def create_bar_chart(date, times, emotions, predictions):
 
-    ind = [1, 2, 3, 4, 5]  # the x locations for the groups
-    width = 0.35  # the width of the bars
+    # Считаем кол-во пиков(самых больших значений из всех) каждой эмоции за все предсказаний
+    emotions_count = {x: 0 for x in emotions}
+    for p in predictions:
+        i = np.argmax(p[0])
+        emotions_count[emotions[i]] += 1
 
     fig, ax = plt.subplots()
-    rects1 = ax.bar(ind, men_means, width,
-                    color='SkyBlue', label='Men')
+    for emotion, count in emotions_count.items():
+        ax.bar(emotion, count, 0.35, label=emotion)
 
-    # Add some text for labels, title and custom x-axis tick labels, etc.
-    ax.set_ylabel('Scores')
-    ax.set_title('Scores by group and gender')
-    ax.set_xticks(ind)
-    ax.set_xticklabels(('G1', 'G2', 'G3', 'G4', 'G5'))
+    ax.set(xlabel='emotions', ylabel='counts',
+           title='Emotions pick by time {} {}-{}'.format(date, times[0], times[1]))
     ax.legend()
 
+    fn = 'bar_chart_{}_{}-{}.png'.format(date, times[0], times[1]).replace(':', '_')
+    fig.savefig('charts/{}.png'.format(fn))
     plt.show()
 
 
-def create_pie_chart(date, emotions, predictions):
-    # Pie chart, where the slices will be ordered and plotted counter-clockwise:
-    labels = 'Frogs', 'Hogs', 'Dogs', 'Logs'
-    sizes = [15, 30, 45, 10]
-    explode = (0, 0.1, 0, 0)  # only "explode" the 2nd slice (i.e. 'Hogs')
+def create_pie_chart(date, times, emotions, predictions):
 
-    fig1, ax1 = plt.subplots()
-    ax1.pie(sizes, explode=explode, labels=labels, autopct='%1.1f%%',
-            shadow=True, startangle=90)
-    ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+    # Считаем кол-во пиков(самых больших значений из всех) каждой эмоции за все предсказаний
+    emotions_count = {x: 0 for x in emotions}
+    for p in predictions:
+        i = np.argmax(p[0])
+        emotions_count[emotions[i]] += 1
 
+    sum_picks = sum(emotions_count.values())
+    sizes = [x/sum_picks*100 for x in emotions_count.values()]
+
+    fig, ax = plt.subplots()
+    ax.pie(sizes, labels=emotions, autopct='%1.1f%%', startangle=90,
+           title='Emotions pick by time {} {}-{}'.format(date, times[0], times[1]))
+    ax.legend()
+
+    fn = 'pie_chart_{}_{}-{}.png'.format(date, times[0], times[1]).replace(':', '_')
+    fig.savefig('charts/{}.png'.format(fn))
     plt.show()
+
