@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
 import numpy as np
 from matplotlib.collections import LineCollection
 
@@ -18,6 +19,7 @@ def create_line_chart(date, times, emotions, predictions):
     ax.set(xlabel='time', ylabel='values',
            title='Emotions by time {} {}-{}'.format(date, times[0], times[1]))
     ax.legend()
+    ax.autoscale()
 
     fn = 'line_chart_{}_{}-{}.png'.format(date, times[0], times[1]).replace(':', '_')
     fig.savefig('charts/{}.png'.format(fn))
@@ -25,20 +27,32 @@ def create_line_chart(date, times, emotions, predictions):
 
 
 def create_time_line(date, times, emotions, predictions):
-    x = np.arange(10)
-    y = [1] * 10
+    colors = ['blue', 'orange', 'green', 'red', 'purple', 'brown']
+    emotion_colors = {e: c for e, c in zip(emotions, colors)}
+
+    x = list(range(0, len(times)))
+    e, y, c = [], [], []
+    for p in predictions:
+        i = np.argmax(p[0])
+        y.append(p[0][i])
+        e.append(emotions[i])
+        c.append(emotion_colors[emotions[i]])
 
     points = np.array([x, y]).T.reshape(-1, 1, 2)
     segments = np.concatenate([points[:-1], points[1:]], axis=1)
 
-    colors = ['r', 'g', 'b']
-
-    lc = LineCollection(segments, colors=colors, linewidths=5)
+    lc = LineCollection(segments, colors=c, linewidths=3)
     fig, ax = plt.subplots()
     ax.add_collection(lc)
-
+    ax.set(xlabel='time', ylabel='values',
+           title='Emotions by time {} {}-{}'.format(date, times[0], times[1]))
     ax.autoscale()
-    ax.margins(0.1)
+
+    patches = [mpatches.Patch(color=c, label=e) for e, c in emotion_colors.items()]
+    plt.legend(handles=patches, loc='upper left')
+
+    fn = 'time_line_chart_{}_{}-{}.png'.format(date, times[0], times[1]).replace(':', '_')
+    fig.savefig('charts/{}.png'.format(fn))
     plt.show()
 
 
@@ -57,6 +71,7 @@ def create_bar_chart(date, times, emotions, predictions):
     ax.set(xlabel='emotions', ylabel='counts',
            title='Emotions pick by time {} {}-{}'.format(date, times[0], times[1]))
     ax.legend()
+    ax.autoscale()
 
     fn = 'bar_chart_{}_{}-{}.png'.format(date, times[0], times[1]).replace(':', '_')
     fig.savefig('charts/{}.png'.format(fn))
@@ -75,9 +90,9 @@ def create_pie_chart(date, times, emotions, predictions):
     sizes = [x/sum_picks*100 for x in emotions_count.values()]
 
     fig, ax = plt.subplots()
-    ax.pie(sizes, labels=emotions, autopct='%1.1f%%', startangle=90,
-           title='Emotions pick by time {} {}-{}'.format(date, times[0], times[1]))
+    ax.pie(sizes, labels=emotions, autopct='%1.1f%%', startangle=90)
     ax.legend()
+    ax.autoscale()
 
     fn = 'pie_chart_{}_{}-{}.png'.format(date, times[0], times[1]).replace(':', '_')
     fig.savefig('charts/{}.png'.format(fn))
