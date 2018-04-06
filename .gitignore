@@ -8,6 +8,7 @@ checkpoints/
 model/
 
 dataset/
+extra-images/
 
 /fer2013.csv
 /shape_predictor_68_face_landmarks.dat
