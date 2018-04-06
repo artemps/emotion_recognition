@@ -50,7 +50,7 @@ class TrainNetwork:
         self.network = regression(self.network, optimizer='adam',
                                   loss='categorical_crossentropy', learning_rate=0.001)
         model = tflearn.DNN(self.network, tensorboard_verbose=0,
-                            checkpoint_path='checkpoints/emotion-recognizer.tfl.ckpt')
+                            checkpoint_path='/checkpoints')
 
         return model
 
