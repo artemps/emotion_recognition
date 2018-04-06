@@ -4,6 +4,7 @@ import sys
 def show_usage():
     print('Usage: python emotion_recognition.py')
     print('\t emotion_recognition.py train \t Saves dataset and trains and saves model')
+    print('\t emotion_recognition.py train --extra \t If you want to add extra images to dataset')
     print('\t emotion_recognition.py start \t Starts app')
 
 
@@ -19,12 +20,18 @@ if __name__ == '__main__':
         prep = PrepareData()
         prep.create_dataset_from_csv()
 
+        if len(sys.argv) > 2 and sys.argv[2] == '--extra':
+            prep.add_extra_images()
+
         trainer = TrainNetwork()
         model = trainer.define_network()
         trainer.start_fit(model)
 
     elif sys.argv[1] == 'start':
-        pass
+        from recognizer import Recognizer
+
+        recognizer = Recognizer()
+        recognizer.run()
 
     else:
         show_usage()
