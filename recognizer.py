@@ -3,7 +3,6 @@ from time import sleep
 from datetime import datetime
 
 import cv2
-import sys
 import numpy as np
 
 from train_network import TrainNetwork
@@ -22,18 +21,16 @@ class Recognizer:
 
         # Пропускаем через детектор
         detected_faces = Recognizer.detector.detect_faces(gray_image)
-        aligned_faces, _ = Recognizer.detector.align_faces(gray_image, detected_faces)
+        aligned_faces = Recognizer.detector.align_faces(gray_image, detected_faces)
         aligned_faces = [x / 255. for x in aligned_faces]
         aligned_faces = np.reshape(aligned_faces, [-1, IMG_SIZE, IMG_SIZE, 1])
 
         predictions = []
-        faces = []
         for face in aligned_faces:
             prediction = model.predict([face])
             predictions.append(prediction)
-            faces.append(face)
 
-        return faces, predictions
+        return aligned_faces, predictions
 
     @staticmethod
     def run():
@@ -72,11 +69,11 @@ class Recognizer:
     def _save_recognized_image(face, prediction, dt):
         emotion = EMOTIONS[np.argmax(prediction[0])]
         dt = dt.strftime('%Y_%m_%d_%H_%M_%S')
-        cv2.imwrite('recognized_emotions/{}_{}.jpg'.format(emotion, dt), face)
+        cv2.imwrite('{}/{}_{}.jpg'.format(USER_DATA_DIR, emotion, dt), face)
 
     @staticmethod
     def _make_dirs():
-        if not os.path.exists(os.path.join(os.getcwd(), RECOGNIZED_IMAGES_DIR)):
-            os.mkdir(RECOGNIZED_IMAGES_DIR)
+        if not os.path.exists(os.path.join(os.getcwd(), USER_DATA_DIR)):
+            os.mkdir(USER_DATA_DIR)
         if not os.path.exists(os.path.join(os.getcwd(), CHARTS_DIR)):
             os.mkdir(CHARTS_DIR)

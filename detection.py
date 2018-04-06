@@ -15,11 +15,9 @@ class Detector:
 
     def align_faces(self, image, detected_faces):
         aligned_faces = []
-        face_rects = []
         for face in detected_faces:
             aligned_face = self.face_aligner.align(IMG_SIZE, image, face,
                                                    landmarkIndices=openface.AlignDlib.OUTER_EYES_AND_NOSE)
             aligned_faces.append(aligned_face)
-            face_rects.append((face.left(), face.top(), face.right(), face.bottom()))
 
-        return aligned_faces, face_rects
+        return aligned_faces
