@@ -2,8 +2,9 @@ __pycache__/
 .idea/
 charts/
 checkpoints/
-datasets/
+dataset/
 model/
-recognized_emotions/
-sorted-sets/
-tflear_logs/
+user_data/
+
+/fer2013.csv
+/shape_predictor_68_face_landmarks.dat

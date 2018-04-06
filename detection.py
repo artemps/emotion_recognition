@@ -1,27 +1,25 @@
 import dlib
 import openface
 
-face_detector = dlib.get_frontal_face_detector()
-
-predictor_model = 'shape_predictor_68_face_landmarks.dat'
-face_aligner = openface.AlignDlib(predictor_model)
+from constants import *
 
 
-def detect_face(image):
-    """
-    Выделить и отцентровать лица на входном изображении    
-    :param image: входное изображение 
-    :return: список изображение отцентрованных лиц, список кортежей с точками квадратов лиц
-    """
+class Detector:
+    def __init__(self):
+        self.face_detector = dlib.get_frontal_face_detector()
+        self.face_aligner = openface.AlignDlib(PREDICTOR_MODEL)
 
-    detected_faces = face_detector(image, 1)
+    def detect_faces(self, image):
+        detected_faces = self.face_detector(image, 1)
+        return detected_faces
 
-    aligned_faces = []
-    face_rects = []
+    def align_faces(self, image, detected_faces):
+        aligned_faces = []
+        face_rects = []
+        for face in detected_faces:
+            aligned_face = self.face_aligner.align(48, image, face,
+                                                   landmarkIndices=openface.AlignDlib.OUTER_EYES_AND_NOSE)
+            aligned_faces.append(aligned_face)
+            face_rects.append((face.left(), face.top(), face.right(), face.bottom()))
 
-    for face_rect in detected_faces:
-        aligned_face = face_aligner.align(64, image, face_rect, landmarkIndices=openface.AlignDlib.OUTER_EYES_AND_NOSE)
-        aligned_faces.append(aligned_face)
-        face_rects.append((face_rect.left(), face_rect.top(), face_rect.right(), face_rect.bottom()))
-
-    return aligned_faces, face_rects
+        return aligned_faces, face_rects

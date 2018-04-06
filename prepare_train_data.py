@@ -1,94 +1,45 @@
 import os
-import glob
 import cv2
-from shutil import copy
+import numpy as np
+from PIL import Image
+import pandas as pd
 
-import detection
-
-
-def preparing_CK_dataset():
-    """
-    Датасет CK+
-    Подготовка данных для тренировки - разбивает изображения по папкам эмоций в папку sorted-sets.
-    Данные находятся в папках images - изображения эмоций, где верхние папки - это один человек, 
-    папки внутри - это эмоции человека, а файлы идут от первого(нейтрального) кадра к конечному(эмоциональному)
-    и emotions - текстовый файл, описывающий в себе номер эмоции
-    :return: количество отсортированных изображений
-    """
-
-    # Эмоции из датасета CK+, данные по которым будут подготавливаться
-    emotions = ['neutral', 'anger', 'contempt', 'disgust', 'fear', 'happy', 'sadness', 'surprise']
-
-    folders = glob.glob('emotions\\*')
-
-    count = 0
-    for x in folders:
-        folder_code = "%s" % x[-4:]
-
-        first_neut = True  # Сохраняем только один нейтральный файл для всех сессий
-
-        for sessions in glob.glob('%s\\*' % x):
-            for file in glob.glob('%s\\*' % sessions):
-                current_session = file[14:17]  # НЕ ТРОГАТЬ ИНДЕКСЫ И НЕ МЕНЯТЬ НАЗВАНИЯ ПАПОК
-                file = open(file, 'r')
-
-                # информация в файле - это номер эмоции человека, по которому мы можем узнать саму эмоцию
-                emotion = int(float(file.readline()))
-
-                if first_neut:
-                    # Берем нейтральный(только один раз)
-                    file_neutral = glob.glob('images\\%s\\%s\\*' % (folder_code, current_session))[0]
-                    dest_neutral = 'sorted-sets\\neutral\\%s' % file_neutral[16:]  # НЕ ТРОГАТЬ ИНДЕКСЫ И НЕ МЕНЯТЬ НАЗВАНИЯ ПАПОК
-                    copy(file_neutral, dest_neutral)
-
-                    first_neut = False
-                    count += 1
-
-                #  и последний(эмоциональный) файлы
-                file_emotion = glob.glob('images\\%s\\%s\\*' % (folder_code, current_session))[-1]
-                dest_emotion = 'sorted-sets\\%s\\%s' % (emotions[emotion], file_emotion[16:])  # НЕ ТРОГАТЬ ИНДЕКСЫ И НЕ МЕНЯТЬ НАЗВАНИЯ ПАПОК
-                copy(file_emotion, dest_emotion)
-
-                count += 1
-
-    return count
+from detection import Detector
+from constants import *
 
 
-def make_training_data():
-    """
-    Все изображения из папок эмоций в sorted-sets
-    Подготовка данных для тренировки - выделяет на каждом изображении лицо, конвертирует изображение в градации серого
-    и отцентровывает его.
-    Конечные изображения разбиваются по папкам эмоций в папке datasets
-    :return: количество обработанных изображений
-    """
+class PrepareData:
+    @staticmethod
+    def create_dataset_from_csv():
+        print('Start creating dataset...')
 
-    # Эмоции(contempt эмоция из датасета CK+ пропускается)
-    emotions = ["anger", "disgust", "fear", "happy", "neutral", "sadness", "surprise"]
+        PrepareData._make_dirs()
 
-    count = 0
-    for emotion in emotions:
-        files = glob.glob('sorted-sets\\%s\\*' % emotion)
+        data = pd.read_csv(CSV_FILE_NAME)
+        i = 1
+        total = data.shape[0]
+        for index, row in data.iterrows():
+            emotion = row['emotion']
+            image = PrepareData._data_to_image(row['pixels'])
 
-        i = 0
-        for f in files:
-            try:
-                image = cv2.imread(f)
-                gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-                aligned_images, _ = detection.detect_face(gray_image)
-            except Exception as e:
-                print(e)
-                os.remove(f)
-                continue
+            gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+            detector = Detector()
+            detected_faces = detector.detect_faces(gray_image)
+            aligned_faces, _ = detector.align_faces(gray_image, detected_faces)
+            for x in aligned_faces:
+                x.save('{}/{}/{}.png'.format(DATA_DIR, EMOTIONS[emotion], i), 'PNG')
+                index += 1
+                print('Progress: {}/{} {:.2f}%'.format(index, total, index * 100.0 / total))
 
-            # Сохраняем изображения с лицами и удаляем остальные
-            if aligned_images:
-                for img in aligned_images:
-                    cv2.imwrite('datasets\\%s\\%s.jpg' % (emotion, i), img)
-                    i += 1
-            else:
-                os.remove(f)
+    @staticmethod
+    def _make_dirs():
+        if not os.path.exists(os.path.join(os.getcwd(), DATA_DIR)):
+            os.mkdir(os.path.join(os.getcwd(), DATA_DIR))
+            for emotion in EMOTIONS:
+                os.mkdir(os.path.join(os.getcwd(), os.path.join(DATA_DIR, emotion)))
 
-        count += i
-
-    return count
+    @staticmethod
+    def _data_to_image(data):
+        data_image = np.fromstring(str(data), dtype=np.uint8, sep=' ').reshape((IMG_SIZE, IMG_SIZE))
+        image = Image.fromarray(data_image).convert('RGB')
+        return image
