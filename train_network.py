@@ -50,12 +50,12 @@ class TrainNetwork:
         self.network = regression(self.network, optimizer='adam',
                                   loss='categorical_crossentropy', learning_rate=0.001)
         model = tflearn.DNN(self.network, tensorboard_verbose=0,
-                            checkpoint_path='/checkpoints')
+                            checkpoint_path='checkpoints')
 
         return model
 
     def start_fit(self, model):
-        print('Emotions:', EMOTIONS)
+        print('\nEmotions:', EMOTIONS)
         print('Start training...')
 
         (x, y), (x_test, y_test) = self.make_sets()
@@ -67,7 +67,7 @@ class TrainNetwork:
                   show_metric=True, batch_size=50, snapshot_epoch=True, run_id='emotion-recognizer')
 
         model.save('model/emotion_recognizer.tfl')
-        print('Network trained and saved as emotion_recognizer.tfl')
+        print('\nNetwork trained and saved as emotion_recognizer.tfl')
 
     def make_sets(self):
         for emotion in EMOTIONS:
@@ -97,33 +97,3 @@ class TrainNetwork:
         train = files[:int(len(files) * 0.8)]  # Берем первые 80% файлов эмоции для тренировки
         test = files[-int(len(files) * 0.2):]  # и последние 20% для тестирования
         return train, test
-
-
-# network = input_data(shape=[None, 48, 48, 1])
-# network = conv_2d(network, 64, 5, activation='relu')
-# network = max_pool_2d(network, 3, strides=2)
-# network = conv_2d(network, 64, 5, activation='relu')
-# network = max_pool_2d(network, 3, strides=2)
-# network = conv_2d(network, 128, 4, activation='relu')
-# network = dropout(network, 0.3)
-# network = fully_connected(network, 3072, activation='relu')
-# network = fully_connected(network, len(EMOTIONS), activation='softmax')
-# network = regression(network, optimizer='momentum', loss='categorical_crossentropy')
-# model = tflearn.DNN(network, checkpoint_path='/checkpoints',
-#                     max_checkpoints=1, tensorboard_verbose=2)
-#
-# print('Start training...')
-# model.fit(
-#       X, Y,
-#       validation_set=(X_test, Y_test),
-#       n_epoch=50,
-#       batch_size=25,
-#       shuffle=True,
-#       show_metric=True,
-#       snapshot_step=200,
-#       snapshot_epoch=True,
-#       run_id='emotion_recognition'
-#     )
-#
-# model.save('model/emotion_recognizer.tfl')
-# print('Network trained and saved as emotion_recognizer.tfl')
