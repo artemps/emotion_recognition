@@ -20,10 +20,9 @@ class PrepareData:
         PrepareData._make_dirs()
 
         data = pd.read_csv(CSV_FILE_NAME)
-        i = 0
         total = data.shape[0]
         detector = Detector()
-        for index, row in data.iterrows():
+        for i, row in data.iterrows():
             emotion = row['emotion']
             image = PrepareData._data_to_image(row['pixels'])
 
@@ -32,7 +31,6 @@ class PrepareData:
             aligned_faces = detector.align_faces(gray_image, detected_faces)
             for x in aligned_faces:
                 cv2.imwrite('{}/{}/{}.png'.format(DATA_DIR, EMOTIONS[emotion], i), x)
-                i += 1
                 print('Progress: {}/{} {:.2f}%'.format(i, total, i * 100.0 / total))
 
     @staticmethod

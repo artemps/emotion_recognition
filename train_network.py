@@ -23,21 +23,19 @@ class TrainNetwork:
         self.network = None
 
     def define_network(self):
-        # Для нормализации данных(масштабирование и отцентровка данных)
-        img_prep = ImagePreprocessing()
-        img_prep.add_featurewise_zero_center()
-        img_prep.add_featurewise_stdnorm()
+        # # Для нормализации данных(масштабирование и отцентровка данных)
+        # img_prep = ImagePreprocessing()
+        # img_prep.add_featurewise_zero_center()
+        # img_prep.add_featurewise_stdnorm()
 
-        # Для создания дополнительных синтетический данных/увеличения кол-ва данных
+        # Для создания дополнительных синтетических данных/увеличения кол-ва данных
         # перевернутые, повернутые, размытые изображения
         img_aug = ImageAugmentation()
         img_aug.add_random_flip_leftright()
         img_aug.add_random_rotation(max_angle=25.0)
         img_aug.add_random_blur(sigma_max=3.0)
 
-        self.network = input_data(shape=[None, IMG_SIZE, IMG_SIZE, 1],
-                                  data_preprocessing=img_prep,
-                                  data_augmentation=img_aug)
+        self.network = input_data(shape=[None, IMG_SIZE, IMG_SIZE, 1], data_augmentation=img_aug)
 
         self.network = conv_2d(self.network, 64, 3, activation='relu')
         self.network = max_pool_2d(self.network, 2)
@@ -50,7 +48,7 @@ class TrainNetwork:
         self.network = regression(self.network, optimizer='adam',
                                   loss='categorical_crossentropy', learning_rate=0.001)
         model = tflearn.DNN(self.network, tensorboard_verbose=0,
-                            checkpoint_path='checkpoints')
+                            checkpoint_path='checkpoints/emotion-recognizer.tfl.ckpt')
 
         return model
 

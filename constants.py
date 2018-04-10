@@ -10,7 +10,7 @@ IMG_SIZE = 48
 DATA_DIR = 'dataset'
 EXTRA_DIR = 'extra-images'
 
-CHARTS_DIR = 'chart'
+CHARTS_DIR = 'charts'
 USER_DATA_DIR = 'user_data'
 
 PREDICTOR_MODEL = 'shape_predictor_68_face_landmarks.dat'
