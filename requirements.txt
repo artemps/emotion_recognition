@@ -1,0 +1,7 @@
+pandas==0.20.3
+numpy==1.14.2
+matplotlib==2.2.2
+opencv_python==3.3.0.9
+dlib==19.7.0
+tflearn==0.3.2
+Pillow==5.1.0
