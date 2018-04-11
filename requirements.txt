@@ -21,6 +21,8 @@ pytz==2018.4
 six==1.11.0
 tensorboard==1.7.0
 tensorflow==1.7.0
+tensorflow-gpu==1.7.0
+tensorflow-tensorboard==0.1.8
 termcolor==1.1.0
 tflearn==0.3.2
 Werkzeug==0.14.1
