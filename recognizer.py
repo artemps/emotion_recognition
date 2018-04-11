@@ -28,6 +28,7 @@ class Recognizer:
         predictions = []
         for face in aligned_faces:
             prediction = model.predict([face])
+            print(EMOTIONS[np.argmax(prediction[0])])
             predictions.append(prediction)
 
         return aligned_faces, predictions
@@ -36,6 +37,7 @@ class Recognizer:
     def run():
         Recognizer._make_dirs()
         model = TrainNetwork().define_network()
+        # model.load(MODEL_DIR)
 
         predictions = []
         times = []

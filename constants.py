@@ -9,6 +9,7 @@ IMG_SIZE = 48
 
 DATA_DIR = 'dataset'
 EXTRA_DIR = 'extra-images'
+MODEL_DIR = 'model/emotion_recognizer.tfl'
 
 CHARTS_DIR = 'charts'
 USER_DATA_DIR = 'user_data'

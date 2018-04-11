@@ -58,10 +58,11 @@ class TrainNetwork:
 
         (x, y), (x_test, y_test) = self.make_sets()
         x, y = shuffle(x, y)
+        x_text, y_test = shuffle(x_test, y_test)
         y = to_categorical(y, len(EMOTIONS))
         y_test = to_categorical(y_test, len(EMOTIONS))
 
-        model.fit(x, y, n_epoch=100, shuffle=True, validation_set=(x_test, y_test),
+        model.fit(x, y, n_epoch=150, shuffle=True, validation_set=(x_test, y_test),
                   show_metric=True, batch_size=50, snapshot_epoch=True, run_id='emotion-recognizer')
 
         model.save('model/emotion_recognizer.tfl')
@@ -72,21 +73,21 @@ class TrainNetwork:
             train, test = TrainNetwork.get_files(emotion)
             for item in train:
                 image = cv2.imread(item)
-                gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY) / 255.
-                self.train_images.append(gray_image)
+                image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY) / 255.
+                self.train_images.append(image)
                 self.train_labels.append(EMOTIONS.index(emotion))
 
             for item in test:
                 image = cv2.imread(item)
-                gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY) / 255.
-                self.test_images.append(gray_image)
+                image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY) / 255.
+                self.test_images.append(image)
                 self.test_labels.append(EMOTIONS.index(emotion))
 
-        train_data = np.reshape(self.train_images, [-1, IMG_SIZE, IMG_SIZE, 1])
-        test_data = np.reshape(self.test_images, [-1, IMG_SIZE, IMG_SIZE, 1])
+        self.train_images = np.reshape(self.train_images, [-1, IMG_SIZE, IMG_SIZE, 1])
+        self.test_images = np.reshape(self.test_images, [-1, IMG_SIZE, IMG_SIZE, 1])
 
-        return (train_data, self.train_labels), \
-               (test_data, self.test_labels)
+        return (self.train_images, self.train_labels), \
+               (self.test_images, self.test_labels)
 
     @staticmethod
     def get_files(emotion):

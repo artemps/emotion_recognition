@@ -25,12 +25,12 @@ class PrepareData:
         for i, row in data.iterrows():
             emotion = row['emotion']
             image = PrepareData._data_to_image(row['pixels'])
-
             gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
             detected_faces = detector.detect_faces(gray_image)
-            aligned_faces = detector.align_faces(gray_image, detected_faces)
-            for x in aligned_faces:
-                cv2.imwrite('{}/{}/{}.png'.format(DATA_DIR, EMOTIONS[emotion], i), x)
+            # aligned_faces = detector.align_faces(gray_image, detected_faces)
+            # for x in aligned_faces:
+            if len(detected_faces) > 0:
+                cv2.imwrite('{}/{}/{}.png'.format(DATA_DIR, EMOTIONS[emotion], i), gray_image)
                 print('Progress: {}/{} {:.2f}%'.format(i, total, i * 100.0 / total))
 
     @staticmethod
