@@ -23,6 +23,5 @@ tensorboard==1.7.0
 tensorflow==1.5.0
 tensorflow-gpu==1.5.0
 tensorflow-tensorboard==1.5.1
-termcolor==1.1.0
 tflearn==0.3.2
 Werkzeug==0.14.1
