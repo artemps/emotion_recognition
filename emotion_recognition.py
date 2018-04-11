@@ -18,10 +18,13 @@ if __name__ == '__main__':
         from train_network import TrainNetwork
 
         prep = PrepareData()
-        prep.create_dataset_from_csv()
 
-        if len(sys.argv) > 2 and sys.argv[2] == '--extra':
-            prep.add_extra_images()
+        if os.path.exists(os.path.join(os.getcwd(), DATA_DIR)):
+            print('\nDataset dir already exists.')
+        else:
+            prep.create_dataset_from_csv()
+            if len(sys.argv) > 2 and sys.argv[2] == '--extra':
+                prep.add_extra_images()
 
         trainer = TrainNetwork()
         model = trainer.define_network()

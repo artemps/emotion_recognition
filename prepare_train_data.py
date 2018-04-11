@@ -12,10 +12,6 @@ from constants import *
 class PrepareData:
     @staticmethod
     def create_dataset_from_csv():
-        if os.path.exists(os.path.join(os.getcwd(), DATA_DIR)):
-            print('\nDataset dir already exists.')
-            return
-
         print('\nCreating dataset...')
         PrepareData._make_dirs()
 
