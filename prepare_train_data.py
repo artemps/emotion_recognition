@@ -12,6 +12,10 @@ from constants import *
 class PrepareData:
     @staticmethod
     def create_dataset_from_csv():
+        if os.path.exists(os.path.join(os.getcwd(), DATA_DIR)):
+            print('\nDataset dir already exists.')
+            return False
+
         print('\nCreating dataset...')
         PrepareData._make_dirs()
 
@@ -28,6 +32,8 @@ class PrepareData:
             if len(detected_faces) > 0:
                 cv2.imwrite('{}/{}/{}.png'.format(DATA_DIR, EMOTIONS[emotion], i), gray_image)
                 print('Progress: {}/{} {:.2f}%'.format(i, total, i * 100.0 / total))
+
+        return True
 
     @staticmethod
     def add_extra_images():
