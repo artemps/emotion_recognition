@@ -1,8 +1,8 @@
-import os
+__author__ = 'Artem Pshenichny'
+
 import cv2
 import glob
 import numpy as np
-from PIL import Image
 import pandas as pd
 
 from detection import Detector
@@ -10,65 +10,76 @@ from constants import *
 
 
 class PrepareData:
-    @staticmethod
-    def create_dataset_from_csv():
-        if os.path.exists(os.path.join(os.getcwd(), DATA_DIR)):
-            print('\nDataset dir already exists.')
-            return False
+    """
+    Class for prepare dataset
+    """
+
+    def __init__(self):
+        self.images = []
+        self.emotions = []
+
+    def create_dataset_from_csv(self):
+        """
+        Create dataset from fer2013 dataset csv file
+        :return: tuple of list dataset images, dataset labels
+        """
 
         print('\nCreating dataset...')
-        PrepareData._make_dirs()
-
         data = pd.read_csv(CSV_FILE_NAME)
         total = data.shape[0]
-        detector = Detector()
         for i, row in data.iterrows():
-            emotion = row['emotion']
             image = PrepareData._data_to_image(row['pixels'])
-            gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-            detected_faces = detector.detect_faces(gray_image)
-            # aligned_faces = detector.align_faces(gray_image, detected_faces)
-            # for x in aligned_faces:
-            if len(detected_faces) > 0:
-                cv2.imwrite('{}/{}/{}.png'.format(DATA_DIR, EMOTIONS[emotion], i), gray_image)
-                print('Progress: {}/{} {:.2f}%'.format(i, total, i * 100.0 / total))
+            emotion = PrepareData._emotion_to_vec(row['emotion'])
+            self.images.append(image)
+            self.emotions.append(emotion)
+            print('Progress: {}/{} {:.2f}%'.format(i, total, i * 100.0 / total))
 
-        return True
+        return self.images, self.emotions
 
-    @staticmethod
-    def add_extra_images():
-        if not os.path.exists(os.path.join(os.getcwd(), EXTRA_DIR)):
-            print('\nExtra images dir does not exist')
-            return
+    def add_extra_images(self):
+        """
+        If --extra flag exists, adds images from extra-images dir to dataset
+        :return: tuple of list dataset images, dataset labels
+        """
 
         detector = Detector()
-
         print('\nAdding extra images...')
-        for emotion in EMOTIONS:
+        for emotion_index, emotion in enumerate(EMOTIONS):
             print('\nEmotion', emotion)
             files = glob.glob('{}\\{}\\*'.format(EXTRA_DIR, emotion))
-            i = 0
             total = len(files)
-            for f in files:
+            for i, f in enumerate(files):
                 image = cv2.imread(f)
-                gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-                detected_faces = detector.detect_faces(gray_image)
-                aligned_faces = detector.align_faces(gray_image, detected_faces)
-                for x in aligned_faces:
-                    cv2.imwrite('{}/{}/extra_{}.png'.format(DATA_DIR, emotion, i), x)
-                    i += 1
-                    print('Progress: {}/{} {:.2f}%'.format(i, total, i * 100.0 / total))
+                detected_faces = detector.detect_faces(image)
+                for face in detected_faces:
+                    self.images.append(face)
+                    self.emotions.append(PrepareData._emotion_to_vec(emotion_index))
+                print('Progress: {}/{} {:.2f}%'.format(i, total, i * 100.0 / total))
+
+        return self.images, self.emotions
 
     @staticmethod
     def _data_to_image(data):
-        data_image = np.fromstring(str(data), dtype=np.uint8, sep=' ').reshape((IMG_SIZE, IMG_SIZE))
-        data_image = Image.fromarray(data_image).convert('RGB')
-        data_image = np.array(data_image)[:, :, ::-1].copy()
-        return data_image
+        """
+        Private method. Convert csv row of pixels to image
+        :param data: row of pixels from csv file
+        :return:
+        """
+
+        data_image = [int(pixel) for pixel in data.split(' ')]
+        image = np.asarray(data_image).reshape(IMG_SIZE, IMG_SIZE)
+        image = cv2.resize(image.astype('uint8'), (IMG_SIZE, IMG_SIZE))
+        image = image.astype('float32') / 255.
+        return image
 
     @staticmethod
-    def _make_dirs():
-        print('Creating dirs...\n')
-        os.mkdir(os.path.join(os.getcwd(), DATA_DIR))
-        for emotion in EMOTIONS:
-            os.mkdir(os.path.join(os.getcwd(), os.path.join(DATA_DIR, emotion)))
+    def _emotion_to_vec(x):
+        """
+        Private method. Convert num of emotion to emotions labels array([0., 0., 0. ,1., 0., 0., 0.,])
+        :param x: num of emotion
+        :return: array
+        """
+
+        d = np.zeros(len(EMOTIONS))
+        d[x] = 1.0
+        return d
