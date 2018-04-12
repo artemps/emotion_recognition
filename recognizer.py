@@ -37,7 +37,8 @@ class Recognizer:
         predictions = []
 
         for face in detected_faces:
-            prediction = self.model.predict([face])
+            face = face.reshape([-1, IMG_SIZE, IMG_SIZE, 1])
+            prediction = self.model.predict(face)
             print(EMOTIONS[np.argmax(prediction[0])])
             predictions.append(prediction[0])
 
@@ -67,7 +68,7 @@ class Recognizer:
                     times.append(datetime.now().time())
 
         except KeyboardInterrupt:
-            Recognizer.cap.release()
+            self.cap.release()
 
     @staticmethod
     def create_report(times, predictions):

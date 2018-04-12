@@ -88,7 +88,8 @@ class TrainNetwork:
         """
 
         model = self.define_network()
-        return model.load(os.path.join(MODEL_DIR, 'emotion_recognizer'))
+        model.load(os.path.join(MODEL_DIR, 'emotion_recognizer'))
+        return model
 
     @staticmethod
     def split_data(images, emotions, validation_split=0.2):

@@ -12,7 +12,7 @@ class Detector:
     """
 
     def __init__(self):
-        self.cascade_classifier = cv2.CascadeClassifier()
+        self.cascade_classifier = cv2.CascadeClassifier(CASC_CLASS_MODEL)
 
     def detect_faces(self, image):
         """
