@@ -1,3 +1,6 @@
+__author__ = 'Artem Pshenichny'
+
+
 import os
 from time import sleep
 from datetime import datetime
@@ -12,69 +15,101 @@ from constants import *
 
 
 class Recognizer:
-    detector = Detector()
-    cap = cv2.VideoCapture(0)
+    """
+    Class of recognizer. Recognize emotions on image using trained model
+    """
 
-    @staticmethod
-    def recognize(image, model):
-        gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    def __init__(self):
+        self.detector = Detector()
+        self.cap = cv2.VideoCapture(0)
 
-        # Пропускаем через детектор
-        detected_faces = Recognizer.detector.detect_faces(gray_image)
-        aligned_faces = Recognizer.detector.align_faces(gray_image, detected_faces)
-        aligned_faces = [x / 255. for x in aligned_faces]
-        aligned_faces = np.reshape(aligned_faces, [-1, IMG_SIZE, IMG_SIZE, 1])
+        t = TrainNetwork()
+        self.model = t.load_trained_model()
 
+    def recognize(self, frame):
+        """
+        Recognize emotions on frame for each face
+        :param frame: input frame from webcam
+        :return: tuple of list faces and predictions
+        """
+
+        detected_faces = self.detector.detect_faces(frame)
         predictions = []
-        for face in aligned_faces:
-            prediction = model.predict([face])
+
+        for face in detected_faces:
+            prediction = self.model.predict([face])
             print(EMOTIONS[np.argmax(prediction[0])])
-            predictions.append(prediction)
+            predictions.append(prediction[0])
 
-        return aligned_faces, predictions
+        return detected_faces, predictions
 
-    @staticmethod
-    def run():
+    def run(self):
+        """
+        Gets frames from webcam and push it to recognizer
+        Stops by CTRL+C
+        :return:
+        """
+
         Recognizer._make_dirs()
-        model = TrainNetwork().define_network()
-        # model.load(MODEL_DIR)
 
         predictions = []
         times = []
         try:
-            while Recognizer.cap.isOpened():
+            while self.cap.isOpened():
                 sleep(0.5)
-                _, frame = Recognizer.cap.read()
-                faces, pred = Recognizer.recognize(frame, model)
+                _, frame = self.cap.read()
 
-                i = 0
+                faces, preds = self.recognize(frame)
+
                 for f, p in zip(faces, predictions):
                     predictions.append(p)
+                    Recognizer._save_recognized_image(f*255., p, datetime.now())
                     times.append(datetime.now().time())
-                    Recognizer._save_recognized_image(f, p, datetime.now())
-                    i += 1
 
         except KeyboardInterrupt:
             Recognizer.cap.release()
-            date = datetime.now().date().strftime('%Y-%m-%d')
-            times = [x.strftime('%H:%M:%S') for x in times]
 
-            report = Report(date, times, predictions)
-            report.create_line_chart()
-            report.create_time_line()
-            report.create_bar_chart()
-            report.create_pie_chart()
+    @staticmethod
+    def create_report(times, predictions):
+        """
+        Creates finish report
+        :param times: arrays of times when whas frames from webcam
+        :param predictions: arrays of predictions
+        :return:
+        """
 
-            report.create_csv()
+        date = datetime.now().date().strftime('%Y-%m-%d')
+        times = [x.strftime('%H:%M:%S') for x in times]
+
+        report = Report(date, times, predictions)
+
+        report.create_line_chart()
+        report.create_time_line()
+        report.create_bar_chart()
+        report.create_pie_chart()
+        report.create_csv()
 
     @staticmethod
     def _save_recognized_image(face, prediction, dt):
-        emotion = EMOTIONS[np.argmax(prediction[0])]
+        """
+        Saves image from webcam with face(user data)
+        :param face: face image
+        :param prediction: emotion prediction
+        :param dt: datetime
+        :return:
+        """
+
+        emotion = EMOTIONS[np.argmax(prediction)]
         dt = dt.strftime('%Y_%m_%d_%H_%M_%S')
         cv2.imwrite('{}/{}_{}.jpg'.format(USER_DATA_DIR, emotion, dt), face)
 
     @staticmethod
     def _make_dirs():
+        """
+        Makes dirs for user images(user data)
+        :return:
+        """
+
         if not os.path.exists(os.path.join(os.getcwd(), USER_DATA_DIR)):
             os.mkdir(USER_DATA_DIR)
         if not os.path.exists(os.path.join(os.getcwd(), CHARTS_DIR)):
