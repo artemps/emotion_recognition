@@ -1,23 +1,37 @@
-import dlib
-import openface
+__author__ = 'Artem Pshenichny'
+
+
+import cv2
 
 from constants import *
 
 
 class Detector:
+    """
+    Detector class for detection faces on dataset images
+    """
+
     def __init__(self):
-        self.face_detector = dlib.get_frontal_face_detector()
-        self.face_aligner = openface.AlignDlib(PREDICTOR_MODEL)
+        self.cascade_classifier = cv2.CascadeClassifier()
 
     def detect_faces(self, image):
-        detected_faces = self.face_detector(image, 1)
-        return detected_faces
+        """
+        Detects faces on input image
+        :param image: imput image
+        :return: list of cropped images(with faces)
+        """
 
-    def align_faces(self, image, detected_faces):
-        aligned_faces = []
-        for face in detected_faces:
-            aligned_face = self.face_aligner.align(IMG_SIZE, image, face,
-                                                   landmarkIndices=openface.AlignDlib.OUTER_EYES_AND_NOSE)
-            aligned_faces.append(aligned_face)
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        faces = self.cascade_classifier.detectMultiScale(image, scaleFactor=1.3, minNeighbors=5)
 
-        return aligned_faces
+        if len(faces) == 0:
+            return []
+
+        faces_images = []
+        for face in faces:
+            face_image = image[face[1]:face[1] + face[2], face[0]:face[0] + face[3]]
+            face_image = cv2.resize(face_image, (IMG_SIZE, IMG_SIZE))
+            face_image = face_image.astype('float32') / 255.
+            faces_images.append(face_image)
+
+        return faces_images
