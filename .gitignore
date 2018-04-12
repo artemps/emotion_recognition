@@ -6,9 +6,10 @@ user_data/
 
 checkpoints/
 model/
+tflearn_logs/
 
 dataset/
 extra-images/
 
 /fer2013.csv
-/shape_predictor_68_face_landmarks.dat
+/haarcascade_frontalface_default.xml
