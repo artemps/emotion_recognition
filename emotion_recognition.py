@@ -1,3 +1,7 @@
+""" Entry point of application """
+__author__ = 'Artem Pshenichny'
+
+
 import sys
 
 
@@ -18,15 +22,12 @@ if __name__ == '__main__':
         from train_network import TrainNetwork
 
         prep = PrepareData()
-        created = prep.create_dataset_from_csv()
+        images, emotions = prep.create_dataset_from_csv()
+        if len(sys.argv) > 2 and sys.argv[2] == '--extra':
+            prep.add_extra_images()
 
-        if created:
-            if len(sys.argv) > 2 and sys.argv[2] == '--extra':
-                prep.add_extra_images()
-
-        trainer = TrainNetwork()
-        model = trainer.define_network()
-        trainer.start_fit(model)
+        trainer = TrainNetwork(images, emotions)
+        trainer.start_train()
 
     elif sys.argv[1] == 'start':
         from recognizer import Recognizer
