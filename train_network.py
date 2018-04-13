@@ -78,7 +78,7 @@ class TrainNetwork:
 
         self.define_network()
         self.model.fit(self.train_data[0], self.train_data[1], validation_set=self.val_data,
-                       n_epoch=100, batch_size=64, shuffle=True, show_metric=True,
+                       n_epoch=60, batch_size=32, shuffle=True, show_metric=True,
                        snapshot_epoch=True, snapshot_step=200, run_id='emotion-recognition')
 
         self.model.save(os.path.join(MODEL_DIR, 'emotion_recognizer'))
@@ -106,10 +106,12 @@ class TrainNetwork:
 
         num_samples = len(images)
         num_train_samples = int((1 - validation_split) * num_samples)
-        train_x = images[:num_train_samples]
-        train_y = emotions[:num_train_samples]
-        val_x = images[num_train_samples:]
-        val_y = emotions[num_train_samples:]
+
+        # First 20% - val, Last 80% - train
+        train_x = images[-num_train_samples:]
+        train_y = emotions[-num_train_samples:]
+        val_x = images[:-num_train_samples]
+        val_y = emotions[:-num_train_samples]
 
         train_data = (train_x.reshape([-1, IMG_SIZE, IMG_SIZE, 1]), train_y)
         val_data = (val_x.reshape([-1, IMG_SIZE, IMG_SIZE, 1]), val_y)
