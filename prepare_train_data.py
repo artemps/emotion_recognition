@@ -17,6 +17,7 @@ class PrepareData:
     def __init__(self):
         self.images = []
         self.emotions = []
+        self.detector = Detector()
 
     def create_dataset_from_csv(self):
         """
@@ -30,8 +31,10 @@ class PrepareData:
         for i, row in data.iterrows():
             image = PrepareData._data_to_image(row['pixels'])
             emotion = PrepareData._emotion_to_vec(row['emotion'])
-            self.images.append(image)
-            self.emotions.append(emotion)
+            detected_faces = self.detector.detect_faces(image, fer2013_image=True)
+            for face in detected_faces:
+                self.images.append(face)
+                self.emotions.append(emotion)
             print('Progress: {}/{} {:.2f}%'.format(i, total, i * 100.0 / total))
 
         return self.images, self.emotions
@@ -69,7 +72,7 @@ class PrepareData:
         data_image = [int(pixel) for pixel in data.split(' ')]
         image = np.asarray(data_image).reshape(IMG_SIZE, IMG_SIZE)
         image = cv2.resize(image.astype('uint8'), (IMG_SIZE, IMG_SIZE))
-        image = image.astype('float32') / 255.
+        # image = image.astype('float32') / 255.
         return image
 
     @staticmethod
