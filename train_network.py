@@ -8,6 +8,7 @@ import tflearn
 from tflearn.layers.core import input_data, dropout, fully_connected
 from tflearn.layers.conv import conv_2d, max_pool_2d
 from tflearn.layers.estimator import regression
+from tflearn.layers.normalization import batch_normalization
 from tflearn.data_augmentation import ImageAugmentation
 from tflearn.data_preprocessing import ImagePreprocessing
 
@@ -35,10 +36,87 @@ class TrainNetwork:
         :return: CNN model
         """
 
-        # For data normalization
-        img_prep = ImagePreprocessing()
-        img_prep.add_featurewise_zero_center()
-        img_prep.add_featurewise_stdnorm()
+        # My CNN 1 (type1)
+
+        # # For data normalization
+        # img_prep = ImagePreprocessing()
+        # img_prep.add_featurewise_zero_center()
+        # img_prep.add_featurewise_stdnorm()
+        #
+        # # For creating extra data(increase dataset). Flipped, Rotated, Blurred and etc. images
+        # img_aug = ImageAugmentation()
+        # img_aug.add_random_flip_leftright()
+        # img_aug.add_random_rotation(max_angle=25.0)
+        # img_aug.add_random_blur(sigma_max=3.0)
+        #
+        # self.network = input_data(shape=[None, IMG_SIZE, IMG_SIZE, 1],
+        #                           data_augmentation=img_aug,
+        #                           data_preprocessing=img_prep)
+        # self.network = conv_2d(self.network, 64, 5, activation='relu')
+        # self.network = max_pool_2d(self.network, 3, strides=2)
+        # self.network = conv_2d(self.network, 64, 5, activation='relu')
+        # self.network = max_pool_2d(self.network, 3, strides=2)
+        # self.network = conv_2d(self.network, 128, 4, activation='relu')
+        # self.network = dropout(self.network, 0.3)
+        # self.network = fully_connected(self.network, 3072, activation='relu')
+        # self.network = fully_connected(self.network, len(EMOTIONS), activation='softmax')
+        # self.network = regression(self.network, optimizer='adam', loss='categorical_crossentropy')
+        # self.model = tflearn.DNN(self.network, checkpoint_path=os.path.join(CHECKPOINTS_PATH + '/emotion_recognition'),
+        #                          max_checkpoints=1, tensorboard_verbose=0)
+
+        # My CNN 2 (type2)
+
+        # # For creating extra data(increase dataset). Flipped, Rotated, Blurred and etc. images
+        # img_aug = ImageAugmentation()
+        # img_aug.add_random_flip_leftright()
+        # img_aug.add_random_rotation(max_angle=25.0)
+        # img_aug.add_random_blur(sigma_max=3.0)
+        #
+        # self.network = input_data(shape=[None, IMG_SIZE, IMG_SIZE, 1],
+        #                           data_augmentation=img_aug)
+        #
+        # self.network = conv_2d(self.network, 64, 3, activation='relu')
+        # self.network = batch_normalization(self.network)
+        # self.network = conv_2d(self.network, 64, 3, activation='relu')
+        # self.network = batch_normalization(self.network)
+        # self.network = max_pool_2d(self.network, 2, strides=2)
+        #
+        # self.network = conv_2d(self.network, 128, 3, activation='relu')
+        # self.network = batch_normalization(self.network)
+        # self.network = conv_2d(self.network, 128, 3, activation='relu')
+        # self.network = batch_normalization(self.network)
+        # self.network = max_pool_2d(self.network, 2, strides=2)
+        # self.network = dropout(self.network, 0.2)
+        #
+        # self.network = conv_2d(self.network, 256, 3, activation='relu')
+        # self.network = batch_normalization(self.network)
+        # self.network = conv_2d(self.network, 256, 3, activation='relu')
+        # self.network = batch_normalization(self.network)
+        # self.network = max_pool_2d(self.network, 2, strides=2)
+        # self.network = dropout(self.network, 0.25)
+        #
+        # self.network = conv_2d(self.network, 512, 3, activation='relu')
+        # self.network = batch_normalization(self.network)
+        # self.network = conv_2d(self.network, 512, 3, activation='relu')
+        # self.network = batch_normalization(self.network)
+        # self.network = max_pool_2d(self.network, 2, strides=2)
+        # self.network = dropout(self.network, 0.25)
+        #
+        # self.network = fully_connected(self.network, 1024, activation='relu')
+        # self.network = batch_normalization(self.network)
+        # self.network = dropout(self.network, 0.45)
+        #
+        # self.network = fully_connected(self.network, 1024, activation='relu')
+        # self.network = batch_normalization(self.network)
+        # self.network = dropout(self.network, 0.45)
+        #
+        # self.network = fully_connected(self.network, len(EMOTIONS), activation='softmax')
+        # self.network = regression(self.network, optimizer='adam', loss='categorical_crossentropy')
+        #
+        # self.model = tflearn.DNN(self.network, checkpoint_path=os.path.join(CHECKPOINTS_PATH + '/emotion_recognition'),
+        #                          max_checkpoints=1, tensorboard_verbose=0)
+
+        # VGG19 + My updates (type3)
 
         # For creating extra data(increase dataset). Flipped, Rotated, Blurred and etc. images
         img_aug = ImageAugmentation()
@@ -47,17 +125,55 @@ class TrainNetwork:
         img_aug.add_random_blur(sigma_max=3.0)
 
         self.network = input_data(shape=[None, IMG_SIZE, IMG_SIZE, 1],
-                                  data_augmentation=img_aug,
-                                  data_preprocessing=img_prep)
-        self.network = conv_2d(self.network, 64, 5, activation='relu')
-        self.network = max_pool_2d(self.network, 3, strides=2)
-        self.network = conv_2d(self.network, 64, 5, activation='relu')
-        self.network = max_pool_2d(self.network, 3, strides=2)
-        self.network = conv_2d(self.network, 128, 4, activation='relu')
-        self.network = dropout(self.network, 0.3)
-        self.network = fully_connected(self.network, 3072, activation='relu')
+                                  data_augmentation=img_aug)
+
+        self.network = conv_2d(self.network, 64, 3, activation='relu')
+        self.network = batch_normalization(self.network)
+        self.network = conv_2d(self.network, 64, 3, activation='relu')
+        self.network = max_pool_2d(self.network, 2, strides=2)
+
+        self.network = conv_2d(self.network, 128, 3, activation='relu')
+        self.network = batch_normalization(self.network)
+        self.network = conv_2d(self.network, 128, 3, activation='relu')
+        self.network = max_pool_2d(self.network, 2, strides=2)
+
+        self.network = conv_2d(self.network, 256, 3, activation='relu')
+        self.network = batch_normalization(self.network)
+        self.network = conv_2d(self.network, 256, 3, activation='relu')
+        self.network = batch_normalization(self.network)
+        self.network = conv_2d(self.network, 256, 3, activation='relu')
+        self.network = batch_normalization(self.network)
+        self.network = conv_2d(self.network, 256, 3, activation='relu')
+        self.network = max_pool_2d(self.network, 2, strides=2)
+
+        self.network = conv_2d(self.network, 512, 3, activation='relu')
+        self.network = batch_normalization(self.network)
+        self.network = conv_2d(self.network, 512, 3, activation='relu')
+        self.network = batch_normalization(self.network)
+        self.network = conv_2d(self.network, 512, 3, activation='relu')
+        self.network = batch_normalization(self.network)
+        self.network = conv_2d(self.network, 512, 3, activation='relu')
+        self.network = max_pool_2d(self.network, 2, strides=2)
+
+        self.network = conv_2d(self.network, 512, 3, activation='relu')
+        self.network = batch_normalization(self.network)
+        self.network = conv_2d(self.network, 512, 3, activation='relu')
+        self.network = batch_normalization(self.network)
+        self.network = conv_2d(self.network, 512, 3, activation='relu')
+        self.network = batch_normalization(self.network)
+        self.network = conv_2d(self.network, 512, 3, activation='relu')
+        self.network = max_pool_2d(self.network, 2, strides=2)
+        self.network = dropout(self.network, 0.2)
+
+        self.network = fully_connected(self.network, 4096, activation='relu')
+        self.network = dropout(self.network, 0.45)
+        self.network = fully_connected(self.network, 4096, activation='relu')
+        self.network = dropout(self.network, 0.45)
+        self.network = fully_connected(self.network, 1024, activation='relu')
+
         self.network = fully_connected(self.network, len(EMOTIONS), activation='softmax')
         self.network = regression(self.network, optimizer='adam', loss='categorical_crossentropy')
+
         self.model = tflearn.DNN(self.network, checkpoint_path=os.path.join(CHECKPOINTS_PATH + '/emotion_recognition'),
                                  max_checkpoints=1, tensorboard_verbose=0)
 
@@ -78,8 +194,8 @@ class TrainNetwork:
 
         self.define_network()
         self.model.fit(self.train_data[0], self.train_data[1], validation_set=self.val_data,
-                       n_epoch=60, batch_size=32, shuffle=True, show_metric=True,
-                       snapshot_epoch=True, snapshot_step=200, run_id='emotion-recognition')
+                       n_epoch=100, batch_size=64, shuffle=True, show_metric=True,
+                       snapshot_epoch=True, snapshot_step=1000, run_id='emotion-recognition')
 
         self.model.save(os.path.join(MODEL_DIR, 'emotion_recognizer'))
         print('\nNetwork trained and saved as emotion_recognizer')
