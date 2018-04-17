@@ -3,6 +3,7 @@ __author__ = 'Artem Pshenichny'
 
 
 import sys
+from constants import *
 
 
 def show_usage():
@@ -22,9 +23,12 @@ if __name__ == '__main__':
         from train_network import TrainNetwork
 
         prep = PrepareData()
-        images, emotions = prep.create_dataset_from_csv()
+        images, emotions, count = prep.create_dataset_from_csv()
         if len(sys.argv) > 2 and sys.argv[2] == '--extra':
             prep.add_extra_images()
+
+        for i, emotion in enumerate(EMOTIONS):
+            print('{}: {}'.format(emotion, count.count(i)))
 
         trainer = TrainNetwork(images, emotions)
         trainer.start_train()

@@ -17,6 +17,7 @@ class PrepareData:
     def __init__(self):
         self.images = []
         self.emotions = []
+        self.count = []
         self.detector = Detector()
 
     def create_dataset_from_csv(self):
@@ -35,9 +36,10 @@ class PrepareData:
             for face in detected_faces:
                 self.images.append(face)
                 self.emotions.append(emotion)
+                self.count.append(row['emotion'])
             print('Progress: {}/{} {:.2f}%'.format(i, total, i * 100.0 / total))
 
-        return self.images, self.emotions
+        return self.images, self.emotions, self.count
 
     def add_extra_images(self):
         """
@@ -57,9 +59,8 @@ class PrepareData:
                 for face in detected_faces:
                     self.images.append(face)
                     self.emotions.append(PrepareData._emotion_to_vec(emotion_index))
+                    self.count.append(emotion_index)
                 print('Progress: {}/{} {:.2f}%'.format(i, total, i * 100.0 / total))
-
-        return self.images, self.emotions
 
     @staticmethod
     def _data_to_image(data):
