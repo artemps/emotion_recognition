@@ -5,7 +5,7 @@ __author__ = 'Artem Pshenichny'
 import sys
 from datetime import datetime
 from constants import *
-from app import app_run
+from dash_app import app_run
 
 
 def show_usage():
@@ -20,6 +20,7 @@ if __name__ == '__main__':
         show_usage()
         exit()
 
+    # Train network
     if sys.argv[1] == 'train':
         from prepare_train_data import PrepareData
         from train_network import TrainNetwork
@@ -35,12 +36,15 @@ if __name__ == '__main__':
         trainer = TrainNetwork(images, emotions)
         trainer.start_train()
 
+    # Start emotion recognition
     elif sys.argv[1] == 'start':
         from recognizer import Recognizer
 
         recognizer = Recognizer()
         times, predictions = recognizer.run()
         date = datetime.now().date().strftime('%Y-%m-%d')
+
+        # Start dash app to shows charts
         app_run(date, times, predictions)
 
     else:
