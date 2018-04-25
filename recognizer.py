@@ -22,9 +22,7 @@ class Recognizer:
     def __init__(self):
         self.detector = Detector()
         self.cap = cv2.VideoCapture(0)
-
-        t = TrainNetwork()
-        self.model = t.load_trained_model()
+        self.model = TrainNetwork().load_trained_model()
 
     def recognize(self, frame):
         """
@@ -51,8 +49,6 @@ class Recognizer:
         :return:
         """
 
-        Recognizer._make_dirs()
-
         predictions = []
         times = []
         try:
@@ -72,26 +68,6 @@ class Recognizer:
             return times, predictions
 
     @staticmethod
-    def create_report(times, predictions):
-        """
-        Creates finish report
-        :param times: arrays of times when whas frames from webcam
-        :param predictions: arrays of predictions
-        :return:
-        """
-
-        date = datetime.now().date().strftime('%Y-%m-%d')
-        times = [x.strftime('%H:%M:%S') for x in times]
-
-        report = Report(date, times, predictions)
-
-        report.create_line_chart()
-        report.create_time_line()
-        report.create_bar_chart()
-        report.create_pie_chart()
-        report.create_csv()
-
-    @staticmethod
     def _save_recognized_image(face, prediction, dt):
         """
         Saves image from webcam with face(user data)
@@ -101,18 +77,9 @@ class Recognizer:
         :return:
         """
 
+        if not os.path.exists(os.path.join(os.getcwd(), USER_DATA_DIR)):
+            os.mkdir(USER_DATA_DIR)
+
         emotion = EMOTIONS[np.argmax(prediction)]
         dt = dt.strftime('%Y_%m_%d_%H_%M_%S')
         cv2.imwrite('{}/{}_{}.jpg'.format(USER_DATA_DIR, emotion, dt), face)
-
-    @staticmethod
-    def _make_dirs():
-        """
-        Makes dirs for user images(user data)
-        :return:
-        """
-
-        if not os.path.exists(os.path.join(os.getcwd(), USER_DATA_DIR)):
-            os.mkdir(USER_DATA_DIR)
-        if not os.path.exists(os.path.join(os.getcwd(), CHARTS_DIR)):
-            os.mkdir(CHARTS_DIR)
