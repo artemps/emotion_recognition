@@ -66,58 +66,6 @@ class TrainNetwork:
 
         # My CNN 2 (type2)
 
-        # # For creating extra data(increase dataset). Flipped, Rotated, Blurred and etc. images
-        # img_aug = ImageAugmentation()
-        # img_aug.add_random_flip_leftright()
-        # img_aug.add_random_rotation(max_angle=25.0)
-        # img_aug.add_random_blur(sigma_max=3.0)
-        #
-        # self.network = input_data(shape=[None, IMG_SIZE, IMG_SIZE, 1],
-        #                           data_augmentation=img_aug)
-        #
-        # self.network = conv_2d(self.network, 64, 3, activation='relu')
-        # self.network = batch_normalization(self.network)
-        # self.network = conv_2d(self.network, 64, 3, activation='relu')
-        # self.network = batch_normalization(self.network)
-        # self.network = max_pool_2d(self.network, 2, strides=2)
-        #
-        # self.network = conv_2d(self.network, 128, 3, activation='relu')
-        # self.network = batch_normalization(self.network)
-        # self.network = conv_2d(self.network, 128, 3, activation='relu')
-        # self.network = batch_normalization(self.network)
-        # self.network = max_pool_2d(self.network, 2, strides=2)
-        # self.network = dropout(self.network, 0.2)
-        #
-        # self.network = conv_2d(self.network, 256, 3, activation='relu')
-        # self.network = batch_normalization(self.network)
-        # self.network = conv_2d(self.network, 256, 3, activation='relu')
-        # self.network = batch_normalization(self.network)
-        # self.network = max_pool_2d(self.network, 2, strides=2)
-        # self.network = dropout(self.network, 0.25)
-        #
-        # self.network = conv_2d(self.network, 512, 3, activation='relu')
-        # self.network = batch_normalization(self.network)
-        # self.network = conv_2d(self.network, 512, 3, activation='relu')
-        # self.network = batch_normalization(self.network)
-        # self.network = max_pool_2d(self.network, 2, strides=2)
-        # self.network = dropout(self.network, 0.25)
-        #
-        # self.network = fully_connected(self.network, 1024, activation='relu')
-        # self.network = batch_normalization(self.network)
-        # self.network = dropout(self.network, 0.45)
-        #
-        # self.network = fully_connected(self.network, 1024, activation='relu')
-        # self.network = batch_normalization(self.network)
-        # self.network = dropout(self.network, 0.45)
-        #
-        # self.network = fully_connected(self.network, len(EMOTIONS), activation='softmax')
-        # self.network = regression(self.network, optimizer='adam', loss='categorical_crossentropy')
-        #
-        # self.model = tflearn.DNN(self.network, checkpoint_path=os.path.join(CHECKPOINTS_PATH + '/emotion_recognition'),
-        #                          max_checkpoints=1, tensorboard_verbose=0)
-
-        # VGG19 + My updates (type3)
-
         # For creating extra data(increase dataset). Flipped, Rotated, Blurred and etc. images
         img_aug = ImageAugmentation()
         img_aug.add_random_flip_leftright()
@@ -130,46 +78,37 @@ class TrainNetwork:
         self.network = conv_2d(self.network, 64, 3, activation='relu')
         self.network = batch_normalization(self.network)
         self.network = conv_2d(self.network, 64, 3, activation='relu')
+        self.network = batch_normalization(self.network)
         self.network = max_pool_2d(self.network, 2, strides=2)
 
         self.network = conv_2d(self.network, 128, 3, activation='relu')
         self.network = batch_normalization(self.network)
         self.network = conv_2d(self.network, 128, 3, activation='relu')
-        self.network = max_pool_2d(self.network, 2, strides=2)
-
-        self.network = conv_2d(self.network, 256, 3, activation='relu')
         self.network = batch_normalization(self.network)
-        self.network = conv_2d(self.network, 256, 3, activation='relu')
-        self.network = batch_normalization(self.network)
-        self.network = conv_2d(self.network, 256, 3, activation='relu')
-        self.network = batch_normalization(self.network)
-        self.network = conv_2d(self.network, 256, 3, activation='relu')
-        self.network = max_pool_2d(self.network, 2, strides=2)
-
-        self.network = conv_2d(self.network, 512, 3, activation='relu')
-        self.network = batch_normalization(self.network)
-        self.network = conv_2d(self.network, 512, 3, activation='relu')
-        self.network = batch_normalization(self.network)
-        self.network = conv_2d(self.network, 512, 3, activation='relu')
-        self.network = batch_normalization(self.network)
-        self.network = conv_2d(self.network, 512, 3, activation='relu')
-        self.network = max_pool_2d(self.network, 2, strides=2)
-
-        self.network = conv_2d(self.network, 512, 3, activation='relu')
-        self.network = batch_normalization(self.network)
-        self.network = conv_2d(self.network, 512, 3, activation='relu')
-        self.network = batch_normalization(self.network)
-        self.network = conv_2d(self.network, 512, 3, activation='relu')
-        self.network = batch_normalization(self.network)
-        self.network = conv_2d(self.network, 512, 3, activation='relu')
         self.network = max_pool_2d(self.network, 2, strides=2)
         self.network = dropout(self.network, 0.2)
 
-        self.network = fully_connected(self.network, 4096, activation='relu')
-        self.network = dropout(self.network, 0.45)
-        self.network = fully_connected(self.network, 4096, activation='relu')
-        self.network = dropout(self.network, 0.45)
+        self.network = conv_2d(self.network, 256, 3, activation='relu')
+        self.network = batch_normalization(self.network)
+        self.network = conv_2d(self.network, 256, 3, activation='relu')
+        self.network = batch_normalization(self.network)
+        self.network = max_pool_2d(self.network, 2, strides=2)
+        self.network = dropout(self.network, 0.25)
+
+        self.network = conv_2d(self.network, 512, 3, activation='relu')
+        self.network = batch_normalization(self.network)
+        self.network = conv_2d(self.network, 512, 3, activation='relu')
+        self.network = batch_normalization(self.network)
+        self.network = max_pool_2d(self.network, 2, strides=2)
+        self.network = dropout(self.network, 0.25)
+
         self.network = fully_connected(self.network, 1024, activation='relu')
+        self.network = batch_normalization(self.network)
+        self.network = dropout(self.network, 0.45)
+
+        self.network = fully_connected(self.network, 1024, activation='relu')
+        self.network = batch_normalization(self.network)
+        self.network = dropout(self.network, 0.45)
 
         self.network = fully_connected(self.network, len(EMOTIONS), activation='softmax')
         self.network = regression(self.network, optimizer='adam', loss='categorical_crossentropy')
