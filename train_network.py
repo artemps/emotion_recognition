@@ -134,7 +134,7 @@ class TrainNetwork:
         self.define_network()
         self.model.fit(self.train_data[0], self.train_data[1], validation_set=self.val_data,
                        n_epoch=100, batch_size=64, shuffle=True, show_metric=True,
-                       snapshot_epoch=True, snapshot_step=1000, run_id='emotion-recognition')
+                       snapshot_epoch=True, run_id='emotion-recognition')
 
         self.model.save(os.path.join(MODEL_DIR, 'emotion_recognizer'))
         print('\nNetwork trained and saved as emotion_recognizer')
