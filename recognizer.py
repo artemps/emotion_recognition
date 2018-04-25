@@ -62,13 +62,14 @@ class Recognizer:
 
                 faces, preds = self.recognize(frame)
 
-                for f, p in zip(faces, predictions):
+                for f, p in zip(faces, preds):
                     predictions.append(p)
-                    Recognizer._save_recognized_image(f*255., p, datetime.now())
                     times.append(datetime.now().time())
+                    Recognizer._save_recognized_image(frame, p, datetime.now())
 
         except KeyboardInterrupt:
             self.cap.release()
+            return times, predictions
 
     @staticmethod
     def create_report(times, predictions):

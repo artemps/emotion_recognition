@@ -37,7 +37,8 @@ if __name__ == '__main__':
         from recognizer import Recognizer
 
         recognizer = Recognizer()
-        recognizer.run()
+        times, predictions = recognizer.run()
+        recognizer.create_report(times, predictions)
 
     else:
         show_usage()
