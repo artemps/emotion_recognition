@@ -2,6 +2,10 @@ absl-py==0.1.13
 astor==0.6.2
 bleach==1.5.0
 cycler==0.10.0
+dash==0.21.0
+dash-renderer==0.12.1
+dash-html-components==0.10.0
+dash-core-components==0.22.1
 gast==0.2.0
 grpcio==1.10.1
 html5lib==0.9999999

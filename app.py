@@ -3,7 +3,9 @@ __author__ = 'Artem Pshenichny'
 
 
 import sys
+from datetime import datetime
 from constants import *
+from app import app_run
 
 
 def show_usage():
@@ -38,7 +40,8 @@ if __name__ == '__main__':
 
         recognizer = Recognizer()
         times, predictions = recognizer.run()
-        recognizer.create_report(times, predictions)
+        date = datetime.now().date().strftime('%Y-%m-%d')
+        app_run(date, times, predictions)
 
     else:
         show_usage()
