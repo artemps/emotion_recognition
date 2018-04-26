@@ -1,12 +1,13 @@
 __author__ = 'Artem Pshenichny'
 
-import cv2
 import glob
+
+import cv2
 import numpy as np
 import pandas as pd
 
-from detection import Detector
-from constants import *
+from src.constants import *
+from src.utils import Detector
 
 
 class PrepareData:

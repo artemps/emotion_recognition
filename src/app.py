@@ -4,6 +4,7 @@ __author__ = 'Artem Pshenichny'
 
 import sys
 from datetime import datetime
+
 from constants import *
 from dash_app import app_run
 
@@ -22,8 +23,8 @@ if __name__ == '__main__':
 
     # Train network
     if sys.argv[1] == 'train':
-        from prepare_train_data import PrepareData
-        from train_network import TrainNetwork
+        from utils.prepare_train_data import PrepareData
+        from utils.train_network import TrainNetwork
 
         prep = PrepareData()
         images, emotions, count = prep.create_dataset_from_csv()
@@ -38,7 +39,7 @@ if __name__ == '__main__':
 
     # Start emotion recognition
     elif sys.argv[1] == 'start':
-        from recognizer import Recognizer
+        from utils.recognizer import Recognizer
 
         recognizer = Recognizer()
         times, predictions = recognizer.run()

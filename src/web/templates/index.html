@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css"
+          integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+    <link href="../static/style.css" rel="stylesheet">
+
+    <title>Emotion Recognition</title>
+</head>
+
+<body class="text-center">
+
+<div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+    <header class="masthead mb-auto">
+        <div class="inner">
+            <h1 class="masthead-brand">Emotion Recognition</h1>
+            <nav class="nav nav-masthead justify-content-center">
+                <a class="nav-link active" href="#">Home</a>
+                <a class="nav-link" href="#">Contacts</a>
+            </nav>
+        </div>
+    </header>
+
+    <main role="main" class="inner cover">
+        <p class="lead"><img src="../static/emotions.jpg" class="img-fluid"></p>
+        <form class="form-inline" action="upload" method="POST">
+            <div class="form-group mx-sm-3 mb-2">
+                <input type="text" class="form-control" placeholder="Image URL" name="url">
+            </div>
+            <button type="submit" class="btn btn-primary mb-2">Submit</button>
+        </form>
+    </main>
+
+    <footer class="mastfoot mt-auto">
+        <div class="inner">
+            <p>Github link</p>
+        </div>
+    </footer>
+</div>
+
+</body>
+</html>

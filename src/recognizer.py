@@ -2,16 +2,15 @@ __author__ = 'Artem Pshenichny'
 
 
 import os
-from time import sleep
 from datetime import datetime
+from time import sleep
 
 import cv2
 import numpy as np
 
-from train_network import TrainNetwork
-from detection import Detector
-from report import Report
-from constants import *
+from src.constants import *
+from src.utils import Detector
+from src.utils import TrainNetwork
 
 
 class Recognizer:

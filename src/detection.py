@@ -4,7 +4,7 @@ __author__ = 'Artem Pshenichny'
 import cv2
 import numpy as np
 
-from constants import *
+from src.constants import *
 
 
 class Detector:
@@ -46,3 +46,13 @@ class Detector:
             faces_images.append(face_image)
 
         return faces_images
+
+    def get_faces_rects(self, image):
+        """
+        Detecs faces and return rects
+        :param image: input image
+        :return: faces rects
+        """
+
+        faces = self.cascade_classifier.detectMultiScale(image, scaleFactor=1.3, minNeighbors=5)
+        return faces
