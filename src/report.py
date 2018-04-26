@@ -5,7 +5,7 @@ import dash_core_components as dcc
 import dash_html_components as html
 import numpy as np
 
-from src.constants import *
+from constants import *
 
 
 class Report:

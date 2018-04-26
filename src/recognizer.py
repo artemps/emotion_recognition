@@ -8,9 +8,9 @@ from time import sleep
 import cv2
 import numpy as np
 
-from src.constants import *
-from src.utils import Detector
-from src.utils import TrainNetwork
+from constants import *
+from detection import Detector
+from train_network import TrainNetwork
 
 
 class Recognizer:
@@ -18,10 +18,14 @@ class Recognizer:
     Class of recognizer. Recognize emotions on image using trained model
     """
 
-    def __init__(self):
+    def __init__(self, with_webcam=True):
         self.detector = Detector()
-        self.cap = cv2.VideoCapture(0)
         self.model = TrainNetwork().load_trained_model()
+
+        if with_webcam:
+            self.cap = cv2.VideoCapture(0)
+        else:
+            self.cap = None
 
     def recognize(self, frame):
         """

@@ -4,7 +4,7 @@ __author__ = 'Artem Pshenichny'
 import cv2
 import numpy as np
 
-from src.constants import *
+from constants import *
 
 
 class Detector:

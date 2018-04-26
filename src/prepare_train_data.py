@@ -6,8 +6,8 @@ import cv2
 import numpy as np
 import pandas as pd
 
-from src.constants import *
-from src.utils import Detector
+from constants import *
+from detection import Detector
 
 
 class PrepareData:
