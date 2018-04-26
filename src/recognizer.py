@@ -18,14 +18,10 @@ class Recognizer:
     Class of recognizer. Recognize emotions on image using trained model
     """
 
-    def __init__(self, with_webcam=True):
+    def __init__(self):
         self.detector = Detector()
         self.model = TrainNetwork().load_trained_model()
-
-        if with_webcam:
-            self.cap = cv2.VideoCapture(0)
-        else:
-            self.cap = None
+        self.cap = cv2.VideoCapture(0)
 
     def recognize(self, frame):
         """
