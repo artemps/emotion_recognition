@@ -22,6 +22,9 @@ class Recognizer:
         self.detector = Detector()
         self.model = TrainNetwork().load_trained_model()
         self.cap = cv2.VideoCapture(0)
+        if not self.cap.isOpened():
+            print('Webcam is not open.')
+            exit()
 
     def recognize(self, frame):
         """
@@ -47,7 +50,6 @@ class Recognizer:
         Stops by CTRL+C
         :return:
         """
-
         predictions = []
         times = []
         try:
@@ -60,7 +62,7 @@ class Recognizer:
                 for f, p in zip(faces, preds):
                     predictions.append(p)
                     times.append(datetime.now().time())
-                    Recognizer._save_recognized_image(frame, p, datetime.now())
+                    Recognizer._save_recognized_image(frame, p, datetime.now())      
 
         except KeyboardInterrupt:
             self.cap.release()
